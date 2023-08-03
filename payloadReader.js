@@ -31,7 +31,7 @@ module.exports = {
                     dataLen,
                     dataLenLen,
                     length: Buffer.from(data, 'hex').length - HEADER_SIZE,
-                    big: 2 * (HEADER_SIZE + dataLen) > data.length
+                    chunk: 2 * (HEADER_SIZE + dataLen) > data.length
                 });
                 hex = hex.substring(2 * (HEADER_SIZE + dataLen));
             }
@@ -39,7 +39,6 @@ module.exports = {
         } catch (e) {
             res.push({
                 data: hex,
-                big: true,
                 chunk: true
             });
             return res;

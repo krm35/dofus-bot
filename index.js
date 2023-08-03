@@ -4,10 +4,11 @@ const fs = require('fs'),
     os = require('os'),
     {xml2js} = require('xml-js'),
     payloadReader = require('./payloadReader'),
+    triggers = require('./triggers'),
     windows = process.platform === "win32",
     linux = process.platform === "linux";
 
-const osPath = windows ? path.join("C:", "Users", os.userInfo().toString(), 'AppData', 'Roaming')
+const osPath = windows ? path.join("C:", "Users", os.userInfo().username, 'AppData', 'Roaming')
     : linux ? path.join(os.homedir(), '.config') : path.join(os.homedir(), "Library", "Application Support");
 
 const program = JSON.parse("" + fs.readFileSync(path.join(osPath, "zaap", "repositories", "production", "dofus", "main", "release.json")))['location'];
@@ -26,8 +27,8 @@ function connectClient(host, port) {
 
     socket.on('data', async function (data) {
         // noinspection JSCheckFunctionSignatures
-        const payloads = payloadReader.getPayloads(data.toString('hex'));
-        console.log(payloads);
+        payloadReader.getPayloads(data.toString('hex'))
+            .forEach(payload => triggers[payload.msgId]?.forEach(trigger => trigger(socket, payload)));
     });
 
     socket.on('close', function () {
@@ -37,4 +38,4 @@ function connectClient(host, port) {
     socket.on('error', () => null);
 }
 
-connectClient(host, port);
+// connectClient(host, port);

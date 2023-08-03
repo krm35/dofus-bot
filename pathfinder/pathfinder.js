@@ -27,6 +27,7 @@ module.exports.buildGraph = function buildGraph(graph, cells, diagonal) {
     }
 };
 
+// TODO upgrade to 3.4.0
 module.exports.shortestPaths = function shortestPaths(graph, source, destination) {
     let path = graph.shortestPath(source, destination);
     const paths = [path], removedEdges = [], weight = path.weight;
