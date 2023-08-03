@@ -1,12 +1,12 @@
 const http = require('http');
 
-module.exports = (body) => {
+module.exports = (path, body) => {
     return new Promise(function (resolve) {
-        const content = JSON.stringify({message: body});
+        const content = JSON.stringify(body);
         const req = http.request({
             hostname: '127.0.0.1',
             port: 5000,
-            path: '/encode',
+            path,
             method: 'POST'
         }, (res) => {
             let data = '';

@@ -31,10 +31,13 @@ function connectClient(host, port) {
         // noinspection JSCheckFunctionSignatures
         const payloads = payloadReader.getPayloads(chunk + data.toString('hex'));
         if (chunk.length && !payloads?.[0]?.chunk) chunk = "";
-        payloads.forEach(payload => {
-            if (payload.chunk) return chunk = payload.data;
-            triggers[payload.msgId]?.forEach(trigger => trigger(socket, payload))
-        });
+        for (const payload of payloads) {
+            if (payload.chunk) {
+                chunk = payload.data;
+            } else {
+                for (const trigger of triggers?.[payload.msgId] ?? []) await trigger(socket, payload);
+            }
+        }
         if (!payloads?.[payloads.length - 1]?.chunk) chunk = "";
     });
 
