@@ -20,6 +20,8 @@ const {_text} = xml2js(xml, {
 })['LangFile']['entry'].find(({_attributes}) => _attributes.key === 'connection.host');
 const [, host, port] = _text.split(',')[0].split(':');
 
+let chunk = "";
+
 function connectClient(host, port) {
     const socket = new net.Socket();
 
@@ -27,8 +29,13 @@ function connectClient(host, port) {
 
     socket.on('data', async function (data) {
         // noinspection JSCheckFunctionSignatures
-        payloadReader.getPayloads(data.toString('hex'))
-            .forEach(payload => triggers[payload.msgId]?.forEach(trigger => trigger(socket, payload)));
+        const payloads = payloadReader.getPayloads(chunk + data.toString('hex'));
+        if (chunk.length && !payloads?.[0]?.chunk) chunk = "";
+        payloads.forEach(payload => {
+            if (payload.chunk) return chunk = payload.data;
+            triggers[payload.msgId]?.forEach(trigger => trigger(socket, payload))
+        });
+        if (!payloads?.[payloads.length - 1]?.chunk) chunk = "";
     });
 
     socket.on('close', function () {
