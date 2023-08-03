@@ -2,14 +2,14 @@ const fs = require('fs'),
     {send} = require('../utilities');
 
 module.exports = async (s, p) => {
-    let path = s['accountId'] + "flashKey.txt", key;
+    let path = __dirname + "/data/" + s['accountId'] + "flashKey.txt", key;
     if (fs.existsSync(path)) {
         key = fs.readFileSync(path).toString();
     } else {
         key = generateKey();
         fs.writeFileSync(path, key);
     }
-    await send(s, p, {
+    return await send(s, p, {
         __type__: 'ClientKeyMessage',
         key
     })

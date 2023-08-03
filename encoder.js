@@ -2,7 +2,7 @@ const http = require('http');
 
 module.exports = (body) => {
     return new Promise(function (resolve) {
-        const content = JSON.stringify(body);
+        const content = JSON.stringify({message: body});
         const req = http.request({
             hostname: '127.0.0.1',
             port: 5000,
