@@ -49,7 +49,7 @@ deepEqual(getServerMovement(graph.shortestPath("550", "18")), [25126, 24594]);
 deepEqual(getServerMovement(graph.shortestPath("380", "383")), [380, 383]);
 deepEqual(shortestPaths(graph, "508", "481").map(path => getServerMovement(path)).sort((a, b) => a.length - b.length)[0], [29180, 29153]);
 
-console.log(shortestPaths(graph, "507", "507"));
-console.log(shortestPaths(graph, "507", "508"));
-console.log(shortestPaths(graph, "507", "510"));
-console.log(shortestPaths(graph, "507", "510").map(path => getServerMovement(path)));
+// console.log(shortestPaths(graph, "507", "507"));
+// console.log(shortestPaths(graph, "507", "508"));
+// console.log(shortestPaths(graph, "507", "510"));
+// console.log(shortestPaths(graph, "507", "510").map(path => getServerMovement(path)));

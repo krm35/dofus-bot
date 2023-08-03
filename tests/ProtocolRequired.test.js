@@ -4,7 +4,8 @@ const ProtocolRequired = require('../p/ProtocolRequired');
 (async () => {
     let error;
     try {
-        await ProtocolRequired({}, {data: "09890f000d312e302e332b31373130346536"});
+        const result = await ProtocolRequired({}, {data: "09890f000d312e302e332b31373130346536"});
+        strictEqual(typeof result.version, "string")
     } catch (e) {
         error = e;
     }

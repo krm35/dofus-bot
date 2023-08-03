@@ -2,9 +2,7 @@ const ByteArray = require('bytearray-node'),
     labot = require('./labot'),
     payloadWriter = require('./payloadWriter');
 
-module.exports.decode = async (body) => {
-    return labot('/decode', {hex: body});
-};
+module.exports.decode = (hex) => labot('/decode', {hex});
 
 module.exports.send = async (s, p, body) => {
     const payload = await labot('/encode', {message: body});
