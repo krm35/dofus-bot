@@ -1,4 +1,5 @@
 const BIT_RIGHT_SHIFT_LEN_PACKET_ID = 2;
+let _instance_id = 1;
 
 function computeTypeLen(len) {
     if (len > 65535) {
@@ -23,7 +24,8 @@ module.exports = (output, id, data) => {
     const {length} = data.buffer;
     const typeLen = computeTypeLen(length);
     output.writeShort(subComputeStaticHeader(id, typeLen));
-    output.writeUnsignedInt(4);
+    output.writeUnsignedInt(_instance_id);
+    _instance_id++; // TODO global variable use socket instead?
     switch (typeLen) {
         case 0:
             return;

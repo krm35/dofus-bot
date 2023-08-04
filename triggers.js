@@ -23,6 +23,7 @@ const ChannelEnablingMessage = require('./p/ChannelEnablingMessage');
 const AnomalySubareaInformationRequestMessage = require('./p/AnomalySubareaInformationRequestMessage');
 const MapInformationsRequestMessage = require('./p/MapInformationsRequestMessage');
 const GameMapMovementConfirmMessage = require('./p/GameMapMovementConfirmMessage');
+const BasicLatencyStatsMessage = require('./p/BasicLatencyStatsMessage');
 
 module.exports = {
     ProtocolRequired: [ProtocolRequired],
@@ -41,5 +42,6 @@ module.exports = {
     HaapiShopApiKeyMessage: [QuestListRequestMessage, ChannelEnablingMessage, AnomalySubareaInformationRequestMessage],
     CurrentMapMessage: [MapInformationsRequestMessage],
     GameMapMovementMessage: [GameMapMovementConfirmMessage],
+    BasicLatencyStatsRequestMessage: [BasicLatencyStatsMessage],
 };
 
