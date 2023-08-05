@@ -7,7 +7,7 @@ module.exports.decode = (hex) => labot('/decode', {hex});
 
 module.exports.send = async (s, p, body) => {
     const payload = await labot('/encode', {message: body});
-    if (payload?.error) return console.log("error", p, body);
+    if (payload?.error) return console.log("error", p, body, JSON.stringify(body));
     const send = payloadWriter(new ByteArray(), protocol[body.__type__], new ByteArray(Buffer.from(payload.toString(), "hex")));
     s?.write?.(send);
     return send;

@@ -5,6 +5,7 @@ const fs = require('fs'),
     {xml2js} = require('xml-js'),
     payloadReader = require('./payloadReader'),
     triggers = require('./triggers'),
+    protocol = require('./protocol'),
     windows = process.platform === "win32",
     linux = process.platform === "linux";
 
@@ -22,11 +23,12 @@ const [, host, port] = _text.split(',')[0].split(':');
 
 let chunk = "";
 
-function connectClient(host, port) {
+function connect(host, port) {
     const socket = new net.Socket();
 
     socket.connect({host, port});
 
+    // TODO queue
     socket.on('data', async function (data) {
         // noinspection JSCheckFunctionSignatures
         const payloads = payloadReader.getPayloads(chunk + data.toString('hex'));
@@ -35,7 +37,7 @@ function connectClient(host, port) {
             if (payload.chunk) {
                 chunk = payload.data;
             } else {
-                for (const trigger of triggers?.[payload.msgId] ?? []) await trigger(socket, payload);
+                for (const trigger of triggers?.[protocol["id" + payload.msgId]] ?? []) await trigger(socket, payload);
             }
         }
         if (!payloads?.[payloads.length - 1]?.chunk) chunk = "";
@@ -48,4 +50,4 @@ function connectClient(host, port) {
     socket.on('error', () => null);
 }
 
-// connectClient(host, port);
+connect("127.0.0.1", port);

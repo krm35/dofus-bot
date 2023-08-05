@@ -18,17 +18,19 @@ function subComputeStaticHeader(msgId, typeLen) {
     return msgId << BIT_RIGHT_SHIFT_LEN_PACKET_ID | typeLen;
 }
 
-module.exports = (output, id, data) => {
+module.exports = (output, id, data, server) => {
     let high = 0;
     let low = 0;
     const {length} = data.buffer;
     const typeLen = computeTypeLen(length);
     output.writeShort(subComputeStaticHeader(id, typeLen));
-    output.writeUnsignedInt(_instance_id);
-    _instance_id++; // TODO global variable use socket instead?
+    if (!server) {
+        output.writeUnsignedInt(_instance_id);
+        _instance_id++; // TODO global variable use socket instead?
+    }
     switch (typeLen) {
         case 0:
-            return;
+            break;
         case 1:
             output.writeByte(length);
             break;
@@ -42,5 +44,5 @@ module.exports = (output, id, data) => {
             output.writeShort(low);
     }
     output.writeBytes(data, 0, length);
-    return output.buffer.toString("hex");
+    return Buffer.from(output.buffer.toString("hex"), "hex");
 };
