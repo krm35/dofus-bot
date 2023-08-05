@@ -10,6 +10,8 @@ const fs = require('fs'),
     windows = process.platform === "win32",
     linux = process.platform === "linux";
 
+process.on('uncaughtException', err => console.log('uncaughtException', err));
+
 const osPath = windows ? path.join("C:", "Users", os.userInfo().username, 'AppData', 'Roaming')
     : linux ? path.join(os.homedir(), '.config') : path.join(os.homedir(), "Library", "Application Support");
 

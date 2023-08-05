@@ -95,6 +95,6 @@ public class Credentials {
 
     public static void main(String[] args) throws Exception {
         byte[] key = hexStringToByteArray(args[0]);
-        System.out.println(hex(encrypt(key, "   ", args[2], args[1])));
+        System.out.print(hex(encrypt(key, "   ", args[2], args[1])));
     }
 }

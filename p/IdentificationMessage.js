@@ -5,7 +5,7 @@ function encrypt(key, salt, token) {
     // TODO encrypt in JS
     // Thansk to ProjectBlackFalcon https://github.com/ProjectBlackFalcon/DatBot/
     const result = execSync("java -jar " + __dirname + "/Credentials/out/artifacts/Credentials_jar/Credentials.jar \""
-        + Buffer.from(key).toString("hex") + "\" \"" + salt + "\" \"" + token + "\"").toString().split('\n')[0];
+        + Buffer.from(key).toString("hex") + "\" \"" + salt + "\" \"" + token + "\"").toString();
     const credentials = Buffer.from(result, "hex").toJSON().data;
     for (let i = 0; i < credentials.length; i++) credentials[i] -= 128;
     return credentials;
