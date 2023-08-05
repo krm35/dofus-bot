@@ -3,6 +3,7 @@ const fs = require('fs'),
     path = require('path'),
     os = require('os'),
     {xml2js} = require('xml-js'),
+    {send} = require('./utilities'),
     payloadReader = require('./payloadReader'),
     triggers = require('./triggers'),
     protocol = require('./protocol'),
@@ -37,7 +38,10 @@ function connect(host, port) {
             if (payload.chunk) {
                 chunk = payload.data;
             } else {
-                for (const trigger of triggers?.[protocol["id" + payload.msgId]] ?? []) await trigger(socket, payload);
+                for (const trigger of triggers?.[protocol["id" + payload.msgId]] ?? []) {
+                    if (typeof trigger === "string") await send(socket, payload, {__type__: trigger});
+                    else await trigger(socket, payload);
+                }
             }
         }
         if (!payloads?.[payloads.length - 1]?.chunk) chunk = "";
