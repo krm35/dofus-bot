@@ -2,6 +2,7 @@ const ProtocolRequired = require('./p/ProtocolRequired');
 const ClientKeyMessage = require('./p/ClientKeyMessage');
 const IdentificationMessage = require('./p/IdentificationMessage');
 const ServerSelectionMessage = require('./p/ServerSelectionMessage');
+const SelectedServerDataMessage = require('./p/SelectedServerDataMessage');
 const AuthenticationTicketMessage = require('./p/AuthenticationTicketMessage');
 const BasicPingMessage = require('./p/BasicPingMessage');
 const CharacterSelectionMessage = require('./p/CharacterSelectionMessage');
@@ -16,6 +17,7 @@ module.exports = {
     ProtocolRequired: [ProtocolRequired],
     HelloConnectMessage: [ClientKeyMessage, IdentificationMessage],
     ServersListMessage: [ServerSelectionMessage],
+    SelectedServerDataMessage: [SelectedServerDataMessage],
     HelloGameMessage: [AuthenticationTicketMessage],
     AuthenticationTicketAcceptedMessage: ["HaapiApiKeyRequestMessage"],
     HaapiApiKeyMessage: ["CharactersListRequestMessage"],

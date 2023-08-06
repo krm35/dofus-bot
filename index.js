@@ -24,29 +24,28 @@ const {_text} = xml2js(xml, {
 })['LangFile']['entry'].find(({_attributes}) => _attributes.key === 'connection.host');
 const [, host, port] = _text.split(',')[0].split(':');
 
-let chunk = "";
-
-function connect(host, port) {
+const connect = function (host, port) {
     const socket = new net.Socket();
 
+    socket.chunk = "";
     socket.connect({host, port});
 
     // TODO queue
     socket.on('data', async function (data) {
         // noinspection JSCheckFunctionSignatures
-        const payloads = payloadReader.getPayloads(chunk + data.toString('hex'));
-        if (chunk.length && !payloads?.[0]?.chunk) chunk = "";
+        const payloads = payloadReader.getPayloads(socket.chunk + data.toString('hex'));
+        if (socket.chunk.length && !payloads?.[0]?.chunk) socket.chunk = "";
         for (const payload of payloads) {
             if (payload.chunk) {
-                chunk = payload.data;
+                socket.chunk = payload.data;
             } else {
                 for (const trigger of triggers?.[protocol["id" + payload.msgId]] ?? []) {
                     if (typeof trigger === "string") await send(socket, payload, {__type__: trigger});
-                    else await trigger(socket, payload);
+                    else await trigger(socket, payload, {connect});
                 }
             }
         }
-        if (!payloads?.[payloads.length - 1]?.chunk) chunk = "";
+        if (!payloads?.[payloads.length - 1]?.chunk) socket.chunk = "";
     });
 
     socket.on('close', function () {
@@ -54,6 +53,8 @@ function connect(host, port) {
     });
 
     socket.on('error', () => null);
-}
+
+    return socket;
+};
 
 connect("127.0.0.1", port);

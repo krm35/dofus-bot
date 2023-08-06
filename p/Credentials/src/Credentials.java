@@ -1,18 +1,21 @@
 // https://github.com/ProjectBlackFalcon/DatBot/blob/master/DatBot.Interface/src/protocol/network/Crypto.java
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import javax.crypto.Cipher;
-
 
 public class Credentials {
 
     private static final int AES_KEY_LENGTH = 32;
-
+    private static byte[] AES_KEY;
     private static final String publicKey =
             "MIIBUzANBgkqhkiG9w0BAQEFAAOCAUAAMIIBOwKCATIAgucoka9J2PXcNdjcu6CuDmgteIMB+rih" +
                     "2UZJIuSoNT/0J/lEKL/W4UYbDA4U/6TDS0dkMhOpDsSCIDpO1gPG6+6JfhADRfIJItyHZflyXNUj" +
@@ -72,7 +75,42 @@ public class Credentials {
         DataOutputStream array = new DataOutputStream(ous);
         for (int i = 0; i < AES_KEY_LENGTH; ++i)
             array.writeByte((byte) Math.floor(Math.random() * 256));
+        AES_KEY = ous.toByteArray();
+        System.out.println(hex(AES_KEY));
         return ous.toByteArray();
+    }
+
+    public static String decryptAESkey(byte[] encryptedData) {
+        Cipher cipher = null;
+
+        try {
+            cipher = Cipher.getInstance("AES/CBC/NoPadding");
+
+            byte[] iv = new byte[cipher.getBlockSize()];
+            System.arraycopy(AES_KEY, 0, iv, 0, 16);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+            SecretKeySpec secretKey = new SecretKeySpec(AES_KEY, "AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+            byte[] resultbytes = cipher.doFinal(encryptedData);
+            return new String(resultbytes, Charset.forName("utf-8"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    //Simply takes every other two characters an terms them into a byte value
+    //then stuffs them into  a byteArray
+    public static byte[] convertToByteArray(String key) {
+        byte[] b = new byte[key.length() / 2];
+
+        for (int i = 0, bStepper = 0; i < key.length() + 2; i += 2)
+            if (i != 0)
+                b[bStepper++] = ((byte) Integer.parseInt((key.charAt(i - 2) + "" + key.charAt(i - 1)), 16));
+
+        return b;
     }
 
     public static String hex(byte[] bytes) {
@@ -94,7 +132,12 @@ public class Credentials {
     }
 
     public static void main(String[] args) throws Exception {
-        byte[] key = hexStringToByteArray(args[0]);
-        System.out.print(hex(encrypt(key, "   ", args[2], args[1])));
+        if (args.length == 3) {
+            byte[] key = hexStringToByteArray(args[0]);
+            System.out.print(hex(encrypt(key, "   ", args[2], args[1])));
+        } else {
+            AES_KEY = hexStringToByteArray(args[0]);
+            System.out.print(decryptAESkey(hexStringToByteArray(args[1])));
+        }
     }
 }
