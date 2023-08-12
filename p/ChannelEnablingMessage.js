@@ -6,7 +6,7 @@ module.exports = async (s, p) => {
         "channel": 14,
         "enable": false
     });
-    return await send(s, p, {
+    return send(s, p, {
         __type__: "ChannelEnablingMessage",
         "channel": 10,
         "enable": true

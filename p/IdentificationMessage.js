@@ -36,7 +36,7 @@ function encrypt(s, key, salt, token) {
 
 module.exports = async (s, p) => {
     const {key, salt} = await decode(p.data);
-    return await send(s, p, {
+    return send(s, p, {
         __type__: "IdentificationMessage",
         autoconnect: false,
         credentials: encrypt(s, key, salt, "test"),

@@ -9,7 +9,7 @@ module.exports = async (s, p) => {
         key = generateKey();
         fs.writeFileSync(path, key);
     }
-    return await send(s, p, {
+    return send(s, p, {
         __type__: 'ClientKeyMessage',
         key
     })
